@@ -38,8 +38,8 @@ docker-build: ## Build docker image.
 		-f Dockerfile .
 	@$(OK)
 
-.PHONY: docker-push
-docker-push: ## Push docker image.
+.PHONY: publish
+publish: ## Push docker image.
 	docker manifest create --amend $(IMAGE_TAG) $(foreach osarch, $(ALL_OS_ARCH), $(IMAGE_TAG)-${osarch})
 	docker manifest push --purge $(IMAGE_TAG)
 	docker manifest inspect $(IMAGE_TAG)
@@ -50,7 +50,7 @@ builder-instance:
 	docker buildx create --use --name=multi-arch-builder
 
 .PHONY: multi-arch-builder
-multi-arch-builder: builder-instance ## Build multi-arch docker image.
+multi-arch-builder: ## Build multi-arch docker image.
 	for arch in $(TARGETARCHS); do \
 		TARGETARCH=$${arch} $(MAKE) docker-build; \
 	done
